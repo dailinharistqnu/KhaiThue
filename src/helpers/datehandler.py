@@ -27,3 +27,7 @@ def luithang(date):
         year -= 1
     return date.replace(year=year,day=1, month=month-1)
 
+def current_toString():
+    datetoconvert = datetime.now()
+    return datetoconvert.strftime("%Y%m%d_%H%M%S")
+
