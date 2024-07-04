@@ -5,6 +5,9 @@ def main():
     # driver = WebAutomation("C:/Users/taoda/tools/khaithue/src/drivers/chromedriver/chromedriver.exe")
     # Doc file excel
     df = file_processing.load_excel_data("src/input/input.xlsx")
+    for index, row in df.iterrows():
+        print(index)
+        print(row)
 
     #Khoi chay trinh duyet, dang nhap
     driver = WebAutomation("src/drivers/chromedriver/chromedriver.exe")
