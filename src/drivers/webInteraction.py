@@ -34,10 +34,24 @@ class WebAutomation:
         self.click_button("dangnhap")
         self.click_element("//span[text()='Khai thuế  ']")
         self.click_element("//*[contains(text(), 'Khai thuế CNKD')]")
-        input("Please solve the CAPTCHA and log in manually. Press Enter to continue...")
-        # self.select_an_option("/html/body/form/div[2]/table/tbody/tr[1]/td[2]/select","retailCnkd01Proc")
-        # self.click_element("//input[@type='button' and @value='Tiếp tục']")
+        # input("Please solve the CAPTCHA and log in manually. Press Enter to continue...")
 
+    def select_report(self,reportid):
+        self.select_an_option("/html/body/form/div[2]/table/tbody/tr[1]/td[2]/select",reportid)
+        self.click_element("//input[@type='button' and @value='Tiếp tục']")
+
+
+    def select_period(self,type,period):
+        self.select_an_option("/html/body/form/div[2]/div[2]/table/tbody/tr[6]/td[2]/select",type)
+        self.select_an_option("/html/body/form/div[2]/div[2]/table/tbody/tr[12]/td[2]/select",period)
+        self.click_element("//input[@type='button' and @value='Tiếp tục']")
+
+    def select_annex(self,annex):
+        try:
+            self.click_element(f"//font[@id='{annex}']")
+        except Exception as e:
+            print(e)
+            input("Cannot see select period. Manually do it and press Enter to continue....")
         
     def fill_form(self,index, row):
         # input_element = self.wait.until(EC.visibility_of_element_located((By.NAME, field)))
@@ -45,6 +59,8 @@ class WebAutomation:
         # input_element.send_keys(value)
         self.fillcellinrow(f"plct06_{3+index}",row["Ten HH"])
         self.fillcellinrow(f"plct07_{3+index}",row["DVT"])
+        self.fillcellinrow(f"plct08_{3+index}",row["SL"])
+        self.fillcellinrow(f"plct09_{3+index}",row["TT"])
         # self.fillcellinrow(f"plct08_{3+index}",row["DVT"])
 
     def add_new_record(self):
@@ -56,16 +72,19 @@ class WebAutomation:
         except Exception as e:
             print(e)
 
-    def save_draft(self):
-        save_draft_button = self.wait.until(EC.element_to_be_clickable((By.ID, 'save_draft_button_id')))
-        save_draft_button.click()
+    def save_draft(self,xpath):
+        self.click_element(xpath)
 
     def wait(self,time):
         self.wait = WebDriverWait(self.driver, time)
 
     def fillinput(self,name,value):
-        input_element = self.wait.until(EC.visibility_of_element_located((By.NAME, name)))
-        input_element.send_keys(value)
+        try:
+            input_element = self.wait.until(EC.visibility_of_element_located((By.NAME, name)))
+            input_element.send_keys(value)
+        except Exception as e:
+            print(e)            
+            input("Element not found. Manually fill it and press Enter to continue...")
 
     def fillcellinrow(self,id,value):
         try:
@@ -74,26 +93,36 @@ class WebAutomation:
             input_element.send_keys(value)
         except Exception as e:
             print(e)            
-
-
+            input("Element not found. Manually fill it and press Enter to continue...")
 
     def click_button(self,id,outer_element=False):
-        button = self.wait.until(EC.element_to_be_clickable((By.ID, id)))
-        if outer_element:
-            button = button.find_element(By.XPATH,"..")
-        button.click()
+        try:
+            button = self.wait.until(EC.element_to_be_clickable((By.ID, id)))
+            if outer_element:
+                button = button.find_element(By.XPATH,"..")
+            button.click()
+        except Exception as e:
+            print(e)
+            input("Element not found. Manually click it and press Enter to continue...")
     
     def click_element(self,xpath,outer_element=False):
-        button = self.wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
-        if outer_element:
-            button = button.find_element(By.XPATH,"..")
-        button.click()
+        try:
+            button = self.wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
+            if outer_element:
+                button = button.find_element(By.XPATH,"..")
+            button.click()
+        except Exception as e:
+            print(e)
+            input("Element not found. Manually click it and press Enter to continue...")
     
     def select_an_option(self,xpath,value):
-        select_box = self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
-        select_box.click()
-        # select = Select(select_box)
-        # select.select_by_value(value)
+        try:
+            select_box = self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
+            select = Select(select_box)
+            select.select_by_value(value)
+        except Exception as e:
+            print(e)
+            input("Element not found. Manually select it and press Enter to continue...")
 
     def switch_to_iframe(self,frame_name):
         self.driver.switch_to.frame(frame_name)
