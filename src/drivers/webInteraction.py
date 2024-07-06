@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 import os
 
 class WebAutomation:
@@ -38,20 +39,19 @@ class WebAutomation:
 
     def select_report(self,reportid):
         self.select_an_option("/html/body/form/div[2]/table/tbody/tr[1]/td[2]/select",reportid)
+        input("Press Enter to continue....")
         self.click_element("//input[@type='button' and @value='Tiếp tục']")
 
 
     def select_period(self,type,period):
         self.select_an_option("/html/body/form/div[2]/div[2]/table/tbody/tr[6]/td[2]/select",type)
         self.select_an_option("/html/body/form/div[2]/div[2]/table/tbody/tr[12]/td[2]/select",period)
+        input("Press enter to continue....")
         self.click_element("//input[@type='button' and @value='Tiếp tục']")
 
     def select_annex(self,annex):
-        try:
-            self.click_element(f"//font[@id='{annex}']")
-        except Exception as e:
-            print(e)
-            input("Cannot see select period. Manually do it and press Enter to continue....")
+        input("Press enter to continue....")
+        self.click_element(f"//font[@id='{annex}']")
         
     def fill_form(self,index, row):
         # input_element = self.wait.until(EC.visibility_of_element_located((By.NAME, field)))
@@ -59,9 +59,14 @@ class WebAutomation:
         # input_element.send_keys(value)
         self.fillcellinrow(f"plct06_{3+index}",row["Ten HH"])
         self.fillcellinrow(f"plct07_{3+index}",row["DVT"])
-        self.fillcellinrow(f"plct08_{3+index}",row["SL"])
-        self.fillcellinrow(f"plct09_{3+index}",row["TT"])
-        # self.fillcellinrow(f"plct08_{3+index}",row["DVT"])
+        self.fillcellinrow(f"plct08_{3+index}",row["SLTD"],decimal=True)
+        self.fillcellinrow(f"plct09_{3+index}",row["TTTD"])
+        self.fillcellinrow(f"plct10_{3+index}",row["SLN"],decimal=True)
+        self.fillcellinrow(f"plct11_{3+index}",row["TTN"])
+        self.fillcellinrow(f"plct12_{3+index}",row["SLB"],decimal=True)
+        self.fillcellinrow(f"plct13_{3+index}",row["TTB"])
+        # self.fillcellinrow(f"plct14_{3+index}",row["SLTC"])
+        # self.fillcellinrow(f"plct15_{3+index}",row["TTTC"])
 
     def add_new_record(self):
         try:
@@ -86,11 +91,20 @@ class WebAutomation:
             print(e)            
             input("Element not found. Manually fill it and press Enter to continue...")
 
-    def fillcellinrow(self,id,value):
+    def fillcellinrow(self,id,value,decimal=False):
         try:
             input_element = self.wait.until(EC.presence_of_element_located((By.ID, id)))
-            input_element.clear()
-            input_element.send_keys(value)
+            input_element.send_keys(Keys.CONTROL+"a")
+            formated_value = ""
+            if isinstance(value,(int,float)):
+                if decimal:
+                    formated_value = f"{value:,.2f}".replace(",","X").replace(".",",").replace("X",".")
+                else:
+                    formated_value = f"{value:,.0f}"
+            else:
+                formated_value = value
+            print(formated_value)
+            input_element.send_keys(formated_value)
         except Exception as e:
             print(e)            
             input("Element not found. Manually fill it and press Enter to continue...")

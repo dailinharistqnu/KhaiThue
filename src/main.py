@@ -18,7 +18,7 @@ def main():
     driver.select_annex("div_label_pluc_01_02cnkd")
     for index, row in df.iterrows():
         # print(index)
-        print(row)
+        # print(row)
         df.at[index,"Status"]="Done"
         driver.fill_form(index,row)
         time.sleep(1)
